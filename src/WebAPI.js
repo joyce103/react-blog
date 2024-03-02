@@ -8,6 +8,12 @@ export const getPosts = () => {
   );
 };
 
+export const getCurrentPost = (postId) => {
+  return fetch(`${BASE_URL}/posts/${postId}?_expand=user`).then((res) =>
+    res.json()
+  );
+};
+
 export const login = (username, password) => {
   return fetch(`${BASE_URL}/login`, {
     method: "POST",

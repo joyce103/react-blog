@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import React, { useState } from "react";
 import { AddPost } from "../../WebAPI";
+import { MEDIA_QUERY_MOBILE } from "../../constants/breakpoint";
 
 const NewPostForm = styled.form`
   width: 500px;
@@ -11,6 +12,9 @@ const NewPostForm = styled.form`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  ${MEDIA_QUERY_MOBILE} {
+    width: 90%;
+  }
   button {
     border: 1px solid #000000;
     border-radius: 10px;
@@ -25,16 +29,18 @@ const NewPostForm = styled.form`
   }
 `;
 const FormInput = styled.div`
-  width: 270px;
+  width: 80%;
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: space-between;
+  flex-direction: column;
   font-size: 1.2rem;
   margin: 5px 0;
+  p {
+    margin-bottom: 5px;
+    font-size: 1.2rem;
+  }
 `;
 const ButtonGroup = styled.div`
-  width: 270px;
+  width: 80%;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -65,7 +71,7 @@ export default function NewPostPage() {
     <NewPostForm>
       <h1>新增文章</h1>
       <FormInput>
-        Title
+        <p>Title</p>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -74,13 +80,12 @@ export default function NewPostPage() {
         />
       </FormInput>
       <FormInput>
-        Content
+        <p>Content</p>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="請輸入文章內容"
-          rows="5"
-          cols="21"
+          rows="15"
         ></textarea>
       </FormInput>
       <ButtonGroup>

@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
-import { getCurrentPost } from "../../WebAPI";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { DeletePost } from "../../WebAPI";
 import { AuthContext } from "../../contexts";
+import { getPost } from "../../redux/reducers/postReducer";
+import { useDispatch, useSelector } from "react-redux";
 
 const PostContainer = styled.div`
   width: 80%;
@@ -68,12 +69,13 @@ const Post = ({ post, onDelete, isLogin }) => {
 };
 
 export default function PostsPage() {
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const { postId } = useParams();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isLoading = useSelector((store) => store.posts.isLoadingPost);
+  const post = useSelector((store) => store.posts.post);
 
   const handlePostDelete = () => {
     DeletePost(postId).then(() => {
@@ -86,20 +88,14 @@ export default function PostsPage() {
   }, [user]);
 
   useEffect(() => {
-    setIsLoading(true);
-    getCurrentPost(postId)
-      .then((res) => {
-        setPosts(res);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        setIsLoading(true);
-      });
-  }, [postId]);
+    dispatch(getPost(postId));
+  }, [postId, dispatch]);
 
   return (
     <>
-      <Post post={posts} onDelete={handlePostDelete} isLogin={isLogin} />
+      {post && (
+        <Post post={post} onDelete={handlePostDelete} isLogin={isLogin} />
+      )}
       {isLoading && <Loading>載入中</Loading>}
     </>
   );

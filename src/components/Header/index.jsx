@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { AuthContext } from "../../contexts";
-import { setAuthToken } from "../../utils";
-import { MEDIA_QUERY_MOBILE } from "../../constants/breakpoint"
+import { MEDIA_QUERY_MOBILE } from "../../constants/breakpoint";
+import { logout } from "../../redux/reducers/userReducer";
+import { useDispatch, useSelector } from "react-redux";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -51,30 +51,38 @@ const Nav = styled(Link)`
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, setUser } = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const isLogin = useSelector((store) => store.user.isLogin);
+
   const handleLogout = () => {
-    setAuthToken(null);
-    setUser(null);
-    navigate("/");
+    dispatch(logout());
   };
+
+  useEffect(() => {
+    if (!isLogin) {
+      navigate("/");
+    }
+  }, [isLogin, dispatch]);
+
   return (
     <HeaderContainer>
-        <Brand>部落格</Brand>
+      <Brand>部落格</Brand>
       <NavbarList>
-          <Nav to="/" $active={location.pathname === "/"}>
-            首頁
+        <Nav to="/" $active={location.pathname === "/"}>
+          首頁
+        </Nav>
+        {isLogin && (
+          <Nav to="/new-post" $active={location.pathname === "/new-post"}>
+            發布文章
           </Nav>
-          {user && (
-            <Nav to="/new-post" $active={location.pathname === "/new-post"}>
-              發布文章
-            </Nav>
-          )}
-        {!user && (
+        )}
+        {!isLogin ? (
           <Nav to="/login" $active={location.pathname === "/login"}>
             登入
           </Nav>
+        ) : (
+          <Nav onClick={handleLogout}>登出</Nav>
         )}
-        {user && <Nav onClick={handleLogout}>登出</Nav>}
       </NavbarList>
     </HeaderContainer>
   );

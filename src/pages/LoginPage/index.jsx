@@ -1,10 +1,9 @@
-import React, { useState, useContext } from "react";
-import { login, getMe } from "../../WebAPI";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { setAuthToken } from "../../utils";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../contexts";
-import { MEDIA_QUERY_MOBILE } from "../../constants/breakpoint"
+import { MEDIA_QUERY_MOBILE } from "../../constants/breakpoint";
+import { login } from "../../redux/reducers/userReducer";
+import { useDispatch, useSelector } from "react-redux";
 
 const ErrorMessage = styled.p`
   color: red;
@@ -58,32 +57,24 @@ const LoginInput = styled.div`
   }
 `;
 
-
 export default function LoginPage() {
-  const { setUser } = useContext(AuthContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isLogin = useSelector((store) => store.user.isLogin);
+  const errorMessage = useSelector((store) => store.user.errorMessage);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setErrorMessage(null);
-    login(username, password).then((data) => {
-      if (data.ok === 0) {
-        return setErrorMessage(data.message);
-      }
-      setAuthToken(data.token);
-      getMe().then((res) => {
-        if (res.ok !== 1) {
-          setAuthToken(null);
-          return setErrorMessage(res.toString());
-        }
-        setUser(res.data);
-        navigate("/");
-      });
-    });
+    dispatch(login(username, password));
   };
+  useEffect(() => {
+    if (isLogin) {
+      navigate("/");
+    }
+  }, [isLogin, dispatch]);
+
   return (
     <LoginForm onSubmit={handleSubmit}>
       <LoginTitle>LOGIN</LoginTitle>

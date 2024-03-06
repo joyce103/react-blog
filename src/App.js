@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -7,22 +7,21 @@ import Header from "./components/Header";
 import NewPostPage from "./pages/NewPostPage";
 import styled from "styled-components";
 import { AuthContext } from "./contexts";
-import { getMe } from "./WebAPI";
+import { RememberLoginState } from "./redux/reducers/userReducer";
+import { useDispatch } from "react-redux";
 
 const Root = styled.div``;
 
 function App() {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getMe().then(res => {
-      if(res.ok) {
-        setUser(res.data)
-      }
-    })
-  },[])
+    dispatch(RememberLoginState());
+  }, []);
+
   return (
-    <AuthContext.Provider value={{user, setUser}}>
+    <AuthContext.Provider value={{ user, setUser }}>
       <Root>
         <Router>
           <Header />

@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { DeletePost } from "../../WebAPI";
-import { AuthContext } from "../../contexts";
 import { getPost } from "../../redux/reducers/postReducer";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -69,23 +68,18 @@ const Post = ({ post, onDelete, isLogin }) => {
 };
 
 export default function PostsPage() {
-  const [isLogin, setIsLogin] = useState(false);
   const { postId } = useParams();
-  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isLoading = useSelector((store) => store.posts.isLoadingPost);
   const post = useSelector((store) => store.posts.post);
+  const isLogin = useSelector((store) => store.user.isLogin);
 
   const handlePostDelete = () => {
     DeletePost(postId).then(() => {
       navigate("/");
     });
   };
-
-  useEffect(() => {
-    user ? setIsLogin(true) : setIsLogin(false);
-  }, [user]);
 
   useEffect(() => {
     dispatch(getPost(postId));

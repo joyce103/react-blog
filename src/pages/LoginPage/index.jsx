@@ -67,7 +67,7 @@ export default function LoginPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(login(username, password));
+    username && password ? dispatch(login(username, password)) : alert('該欄位不可為空白')
   };
   useEffect(() => {
     if (isLogin) {

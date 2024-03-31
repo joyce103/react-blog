@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { DeletePost } from "../../WebAPI";
-import { getPost } from "../../redux/reducers/postReducer";
+import { deletePost } from "../../WebAPI";
+import { getCurrentPost } from "../../redux/reducers/postReducer";
 import { useDispatch, useSelector } from "react-redux";
 
 const PostContainer = styled.div`
@@ -53,8 +53,8 @@ const Loading = styled.div`
   left: 0;
 `;
 
-const Post = ({ post, onDelete, isLogin }) => {
-  const { title, body, createdAt } = post;
+const Post = ({ currentPost, postDelete, isLogin }) => {
+  const { title, body, createdAt } = currentPost;
   return (
     <PostContainer>
       <PostHeader>
@@ -62,7 +62,7 @@ const Post = ({ post, onDelete, isLogin }) => {
         <PostTime>{new Date(createdAt).toLocaleString()}</PostTime>
       </PostHeader>
       <PostBody>{body}</PostBody>
-      {isLogin && <DeleteBtn onClick={onDelete}>刪除文章</DeleteBtn>}
+      {isLogin && <DeleteBtn onClick={postDelete}>刪除文章</DeleteBtn>}
     </PostContainer>
   );
 };
@@ -72,23 +72,23 @@ export default function PostsPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isLoading = useSelector((store) => store.posts.isLoadingPost);
-  const post = useSelector((store) => store.posts.post);
+  const currentPost = useSelector((store) => store.posts.currentPost);
   const isLogin = useSelector((store) => store.user.isLogin);
 
   const handlePostDelete = () => {
-    DeletePost(postId).then(() => {
+    deletePost(postId).then(() => {
       navigate("/");
     });
   };
 
   useEffect(() => {
-    dispatch(getPost(postId));
+    dispatch(getCurrentPost(postId));
   }, [postId, dispatch]);
 
   return (
     <>
-      {post && (
-        <Post post={post} onDelete={handlePostDelete} isLogin={isLogin} />
+      {currentPost && (
+        <Post currentPost={currentPost} postDelete={handlePostDelete} isLogin={isLogin} />
       )}
       {isLoading && <Loading>載入中</Loading>}
     </>

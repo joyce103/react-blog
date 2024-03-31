@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import React, { useState } from "react";
-import { AddPost } from "../../WebAPI";
+import { addPost } from "../../WebAPI";
 import { MEDIA_QUERY_MOBILE } from "../../constants/breakpoint";
 
 const NewPostForm = styled.form`
@@ -51,19 +51,19 @@ const ButtonGroup = styled.div`
 `;
 
 export default function NewPostPage() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [postTitle, setPostTitle] = useState("");
+  const [postContent, setPostContent] = useState("");
 
   const handleInputClear = (e) => {
     e.preventDefault();
-    setTitle("");
-    setContent("");
+    setPostTitle("");
+    setPostContent("");
   };
-  const handlePostAdd = (e) => {
+  const handlePostCreate = (e) => {
     e.preventDefault();
-    AddPost(title, content);
-    setTitle("");
-    setContent("");
+    addPost(postTitle, postContent);
+    setPostTitle("");
+    setPostContent("");
     alert("新增成功!");
   };
 
@@ -73,8 +73,8 @@ export default function NewPostPage() {
       <FormInput>
         <p>Title</p>
         <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={postTitle}
+          onChange={(e) => setPostTitle(e.target.value)}
           placeholder="請輸入標題"
           type="textarea"
         />
@@ -82,18 +82,18 @@ export default function NewPostPage() {
       <FormInput>
         <p>Content</p>
         <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
+          value={postContent}
+          onChange={(e) => setPostContent(e.target.value)}
           placeholder="請輸入文章內容"
           rows="15"
         ></textarea>
       </FormInput>
       <ButtonGroup>
-        {title || content ? (
+        {postTitle || postContent ? (
           <button onClick={handleInputClear}>清空</button>
         ) : null}
-        {title && content ? (
-          <button onClick={handlePostAdd}>發布</button>
+        {postTitle && postContent ? (
+          <button onClick={handlePostCreate}>發布</button>
         ) : null}
       </ButtonGroup>
     </NewPostForm>

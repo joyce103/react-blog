@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { login as loginAPI, getMe } from "../../WebAPI";
+import { userLogin, getMe } from "../../WebAPI";
 import { setAuthToken } from "../../utils";
 
 export const userReducer = createSlice({
@@ -21,7 +21,7 @@ export const { setIsLogin, setErrorMessage } = userReducer.actions;
 
 export const login = (username, password) => (dispatch) => {
   dispatch(setErrorMessage(null));
-  loginAPI(username, password)
+  userLogin(username, password)
     .then((data) => {
       if (data.ok === 0) {
         return dispatch(setErrorMessage(data.message));
